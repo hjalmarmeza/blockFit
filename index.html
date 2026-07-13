@@ -113,10 +113,8 @@
             margin-bottom: 3rem;
             padding: 0 1rem;
         }
-        .quick-filters-wrapper::after {
-            content: '➔';
+        .quick-filters-wrapper::after, .quick-filters-wrapper::before {
             position: absolute;
-            right: 15px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-secondary);
@@ -124,6 +122,15 @@
             pointer-events: none;
             font-size: 1.2rem;
             display: none;
+            z-index: 10;
+        }
+        .quick-filters-wrapper::after {
+            content: '➔';
+            right: 15px;
+        }
+        .quick-filters-wrapper::before {
+            content: '⬅';
+            left: 15px;
         }
         .quick-filters {
             display: flex;
@@ -395,11 +402,16 @@
         }
 
         @media (max-width: 768px) {
-            .quick-filters-wrapper::after {
+            .quick-filters-wrapper.can-scroll-right::after {
                 display: block;
-                animation: pulse-arrow 2s infinite;
+                animation: pulse-arrow-right 2s infinite;
             }
-            @keyframes pulse-arrow { 0% { opacity: 0.3; transform: translate(0, -50%); } 50% { opacity: 1; transform: translate(5px, -50%); } 100% { opacity: 0.3; transform: translate(0, -50%); } }
+            .quick-filters-wrapper.can-scroll-left::before {
+                display: block;
+                animation: pulse-arrow-left 2s infinite;
+            }
+            @keyframes pulse-arrow-right { 0% { opacity: 0.3; transform: translate(0, -50%); } 50% { opacity: 1; transform: translate(5px, -50%); } 100% { opacity: 0.3; transform: translate(0, -50%); } }
+            @keyframes pulse-arrow-left { 0% { opacity: 0.3; transform: translate(0, -50%); } 50% { opacity: 1; transform: translate(-5px, -50%); } 100% { opacity: 0.3; transform: translate(0, -50%); } }
             
             .quick-filters {
                 justify-content: flex-start;
@@ -478,8 +490,8 @@
             <input type="text" id="searchInput" class="search-input" placeholder="Buscar ejercicio, ej. 'Sentadilla' o 'Pecho'..." autocomplete="off">
         </div>
 
-        <div class="quick-filters-wrapper">
-            <div class="quick-filters">
+        <div class="quick-filters-wrapper" id="quickFiltersWrapper">
+            <div class="quick-filters" id="quickFilters">
                 <div class="filter-chip" onclick="searchExercises('peso corporal')">🏠 Sin Equipo</div>
                 <div class="filter-chip" onclick="searchExercises('mancuerna')">🏋️ Mancuernas</div>
                 <div class="filter-chip" onclick="searchExercises('cardio')">🏃 Cardio</div>
@@ -776,6 +788,27 @@
                 fab.classList.remove('visible');
             }
         });
+
+        function updateScrollArrows() {
+            const wrapper = document.getElementById('quickFiltersWrapper');
+            const filters = document.getElementById('quickFilters');
+            if (!wrapper || !filters) return;
+            
+            const canScrollLeft = filters.scrollLeft > 5;
+            const canScrollRight = filters.scrollLeft < (filters.scrollWidth - filters.clientWidth - 5);
+            
+            if (canScrollLeft) wrapper.classList.add('can-scroll-left');
+            else wrapper.classList.remove('can-scroll-left');
+            
+            if (canScrollRight) wrapper.classList.add('can-scroll-right');
+            else wrapper.classList.remove('can-scroll-right');
+        }
+
+        document.getElementById('quickFilters').addEventListener('scroll', updateScrollArrows);
+        window.addEventListener('resize', updateScrollArrows);
+        
+        // Initialize arrows on load
+        setTimeout(updateScrollArrows, 100);
 
         initApp();
     </script>
