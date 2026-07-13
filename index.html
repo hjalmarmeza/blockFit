@@ -437,6 +437,126 @@
             transform: scale(0.9);
         }
 
+        /* --- Vistas (Views) --- */
+        .view {
+            display: none;
+            animation: fadeIn 0.3s;
+            padding-bottom: 80px; /* Space for bottom nav */
+        }
+        .view.active {
+            display: block;
+        }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.8rem 0;
+            z-index: 1000;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .nav-item svg {
+            margin-bottom: 4px;
+            transition: transform 0.3s;
+        }
+        .nav-item.active {
+            color: var(--accent-color);
+        }
+        .nav-item.active svg {
+            transform: scale(1.1);
+        }
+
+        /* --- Profile Form --- */
+        .profile-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+        .btn-save {
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        /* --- Favorites --- */
+        .btn-fav {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s;
+        }
+        .btn-fav.active {
+            color: var(--accent-color);
+        }
+        .muscle-group-title {
+            margin: 2rem 0 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.5rem;
+            text-transform: capitalize;
+            color: var(--accent-color);
+        }
+        .routine-empty {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-top: 3rem;
+        }
+
     </style>
 </head>
 <body style="overflow: hidden;">
@@ -459,51 +579,120 @@
         </div>
     </nav>
 
-    <div class="hero">
-        <h1>Forja tu físico ideal</h1>
-        <p>Selecciona un músculo en el mapa interactivo, o usa nuestro buscador universal para encontrar tu próximo entrenamiento.</p>
-        
-        <div class="search-container">
-            <input type="text" id="searchInput" class="search-input" placeholder="Buscar ejercicio, ej. 'Sentadilla' o 'Pecho'..." autocomplete="off">
-        </div>
-
-        <div class="quick-filters-wrapper" id="quickFiltersWrapper">
-            <div class="quick-filters" id="quickFilters">
-                <div class="filter-chip" onclick="searchExercises('peso corporal')">🏠 Sin Equipo</div>
-                <div class="filter-chip" onclick="searchExercises('mancuerna')">🏋️ Mancuernas</div>
-                <div class="filter-chip" onclick="searchExercises('cardio')">🏃 Cardio</div>
-                <div class="filter-chip" onclick="searchExercises('estiramiento')">🧘 Estiramientos</div>
+    <!-- VISTA PRINCIPAL (HOME) -->
+    <div id="view-home" class="view active">
+        <div class="hero">
+            <h1>Forja tu físico ideal</h1>
+            <p>Selecciona un músculo en el mapa interactivo, o usa nuestro buscador universal para encontrar tu próximo entrenamiento.</p>
+            
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Buscar ejercicio, ej. 'Sentadilla' o 'Pecho'..." autocomplete="off">
             </div>
-        </div>
-    </div>
 
-    <div class="main-container">
-        <div class="side-panel">
-            <div class="fact-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                Tip Diario
-            </div>
-            <div class="fact-content" id="dailyFact">
-                El entrenamiento de fuerza no solo desarrolla masa muscular, también acelera tu metabolismo basal, ayudándote a quemar más calorías incluso en reposo.
+            <div class="quick-filters-wrapper" id="quickFiltersWrapper">
+                <div class="quick-filters" id="quickFilters">
+                    <div class="filter-chip" onclick="searchExercises('peso corporal')">🏠 Sin Equipo</div>
+                    <div class="filter-chip" onclick="searchExercises('mancuerna')">🏋️ Mancuernas</div>
+                    <div class="filter-chip" onclick="searchExercises('cardio')">🏃 Cardio</div>
+                    <div class="filter-chip" onclick="searchExercises('estiramiento')">🧘 Estiramientos</div>
+                </div>
             </div>
         </div>
 
-        <div class="map-section">
-            <div class="toggle-group">
-                <button class="side-btn active" onclick="setSide('FRONT')">Frente</button>
-                <button class="side-btn" onclick="setSide('BACK')">Espalda</button>
+        <div class="main-container">
+            <div class="side-panel">
+                <div class="fact-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    Tip Diario
+                </div>
+                <div class="fact-content" id="dailyFact">
+                    El entrenamiento de fuerza no solo desarrolla masa muscular, también acelera tu metabolismo basal, ayudándote a quemar más calorías incluso en reposo.
+                </div>
             </div>
-            <div id="body-chart-container"></div>
-        </div>
 
-        <div class="results-panel">
-            <h2 class="results-title" id="resultsTitle">Selecciona un músculo</h2>
-            <div id="loader" class="loader"></div>
-            <div id="exercises-list">
-                <p style="color: var(--text-secondary); text-align: center; margin-top: 2rem;">Los ejercicios aparecerán aquí.</p>
+            <div class="map-section">
+                <div class="toggle-group">
+                    <button class="side-btn active" onclick="setSide('FRONT')">Frente</button>
+                    <button class="side-btn" onclick="setSide('BACK')">Espalda</button>
+                </div>
+                <div id="body-chart-container"></div>
+            </div>
+
+            <div class="results-panel">
+                <h2 class="results-title" id="resultsTitle">Selecciona un músculo</h2>
+                <div id="loader" class="loader"></div>
+                <div id="exercises-list">
+                    <p style="color: var(--text-secondary); text-align: center; margin-top: 2rem;">Los ejercicios aparecerán aquí.</p>
+                </div>
             </div>
         </div>
-    </div>
+    </div> <!-- END VIEW HOME -->
+
+    <!-- VISTA RUTINA (FAVORITOS) -->
+    <div id="view-routine" class="view">
+        <div class="hero">
+            <h1>Mi Rutina</h1>
+            <p>Tus ejercicios guardados, agrupados por zona muscular.</p>
+        </div>
+        <div class="main-container">
+            <div class="results-panel" style="width: 100%; border-left: none; padding-left: 0;">
+                <div id="routine-list">
+                    <div class="routine-empty">No tienes ejercicios guardados. Presiona el corazón (❤️) en cualquier ejercicio para añadirlo a tu rutina.</div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- END VIEW RUTINA -->
+
+    <!-- VISTA PERFIL -->
+    <div id="view-profile" class="view">
+        <div class="hero">
+            <h1>Mi Perfil</h1>
+            <p>Configura tus datos para personalizar tu experiencia.</p>
+        </div>
+        <div class="profile-container">
+            <form id="profileForm" onsubmit="saveProfile(event)">
+                <div class="form-group">
+                    <label for="profileAge">Edad (años)</label>
+                    <input type="number" id="profileAge" class="form-control" placeholder="Ej. 25">
+                </div>
+                <div class="form-group">
+                    <label for="profileWeight">Peso (kg)</label>
+                    <input type="number" id="profileWeight" class="form-control" placeholder="Ej. 70">
+                </div>
+                <div class="form-group">
+                    <label for="profileHeight">Talla / Estatura (cm)</label>
+                    <input type="number" id="profileHeight" class="form-control" placeholder="Ej. 175">
+                </div>
+                <div class="form-group">
+                    <label for="profileGoal">Objetivo Principal</label>
+                    <select id="profileGoal" class="form-control">
+                        <option value="ganar">Ganar Masa Muscular (Hipertrofia)</option>
+                        <option value="perder">Perder Grasa (Definición)</option>
+                        <option value="fuerza">Aumentar Fuerza</option>
+                        <option value="mantenimiento">Salud y Mantenimiento</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-save">Guardar Datos</button>
+            </form>
+            <div id="profileMessage" style="color: var(--accent-color); margin-top: 1rem; text-align: center; display: none;">¡Datos guardados con éxito!</div>
+        </div>
+    </div> <!-- END VIEW PERFIL -->
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchView('home', this)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Entrenamiento
+        </div>
+        <div class="nav-item" onclick="switchView('routine', this)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            Mi Rutina
+        </div>
+        <div class="nav-item" onclick="switchView('profile', this)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Perfil
+        </div>
+    </nav>
 
     <script>
         const DATASET_URL = 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/data/exercises.json';
@@ -650,7 +839,9 @@
                     const exerciseText = (ex.instructions && typeof ex.instructions === 'object') ? (ex.instructions.es || ex.instructions.en || 'Sin descripción detallada.') : (ex.instructions || 'Sin descripción detallada.');
                     const translatedTitle = translateTitle(ex.name);
 
+                    const isFav = favorites.includes(ex.name);
                     card.innerHTML = `
+                        <button class="btn-fav ${isFav ? 'active' : ''}" onclick="toggleFavorite(this, '${encodeURIComponent(ex.name)}')">❤️</button>
                         <div class="exercise-media">
                             <img src="${imgUrl}" alt="${translatedTitle}" onerror="this.src='https://via.placeholder.com/300x300?text=Sin+Imagen'">
                         </div>
@@ -763,6 +954,122 @@
         
         // Initialize arrows on load
         setTimeout(updateScrollArrows, 100);
+
+        // --- LÓGICA PREMIUM: Favoritos, Navegación y Perfil ---
+        let favorites = JSON.parse(localStorage.getItem('blockfit_favs') || '[]');
+
+        function toggleFavorite(btn, encodedName) {
+            const name = decodeURIComponent(encodedName);
+            const index = favorites.indexOf(name);
+            if (index > -1) {
+                favorites.splice(index, 1);
+                btn.classList.remove('active');
+            } else {
+                favorites.push(name);
+                btn.classList.add('active');
+            }
+            localStorage.setItem('blockfit_favs', JSON.stringify(favorites));
+            renderRoutine();
+        }
+
+        function switchView(viewId, navElement) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById('view-' + viewId).classList.add('active');
+            navElement.classList.add('active');
+            window.scrollTo(0, 0);
+
+            if (viewId === 'routine') renderRoutine();
+        }
+
+        function renderRoutine() {
+            const container = document.getElementById('routine-list');
+            if (favorites.length === 0) {
+                container.innerHTML = '<div class="routine-empty">No tienes ejercicios guardados. Presiona el corazón (❤️) en cualquier ejercicio para añadirlo a tu rutina.</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            // Agrupar por body_part o target
+            const grouped = {};
+            favorites.forEach(favName => {
+                const ex = globalDataset.find(e => e.name === favName);
+                if (ex) {
+                    const group = translateTitle(ex.body_part || ex.target || 'Otros');
+                    if (!grouped[group]) grouped[group] = [];
+                    grouped[group].push(ex);
+                }
+            });
+
+            for (const [group, exercises] of Object.entries(grouped)) {
+                const title = document.createElement('h2');
+                title.className = 'muscle-group-title';
+                title.innerText = group;
+                container.appendChild(title);
+
+                exercises.forEach(ex => {
+                    const card = document.createElement('div');
+                    card.className = 'exercise-card';
+                    const imgUrl = ex.gif_url ? ('https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/' + ex.gif_url) : 'https://via.placeholder.com/300x300?text=Sin+Imagen';
+                    const exerciseText = (ex.instructions && typeof ex.instructions === 'object') ? (ex.instructions.es || ex.instructions.en || 'Sin descripción.') : (ex.instructions || 'Sin descripción.');
+                    const translatedTitle = translateTitle(ex.name);
+
+                    card.innerHTML = `
+                        <button class="btn-fav active" onclick="toggleFavorite(this, '${encodeURIComponent(ex.name)}')">❤️</button>
+                        <div class="exercise-media">
+                            <img src="${imgUrl}" alt="${translatedTitle}" onerror="this.src='https://via.placeholder.com/300x300?text=Sin+Imagen'">
+                        </div>
+                        <div class="exercise-content">
+                            <h3 class="exercise-name" style="text-transform: capitalize;">${translatedTitle}</h3>
+                            <div class="exercise-badges">
+                                <span class="badge badge-primary">${ex.body_part || 'Varios'}</span>
+                                <span class="badge badge-secondary">${ex.equipment || 'peso corporal'}</span>
+                            </div>
+                            <div class="exercise-instructions">${exerciseText}</div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        function saveProfile(e) {
+            e.preventDefault();
+            const profile = {
+                age: document.getElementById('profileAge').value,
+                weight: document.getElementById('profileWeight').value,
+                height: document.getElementById('profileHeight').value,
+                goal: document.getElementById('profileGoal').value
+            };
+            localStorage.setItem('blockfit_profile', JSON.stringify(profile));
+            const msg = document.getElementById('profileMessage');
+            msg.style.display = 'block';
+            setTimeout(() => msg.style.display = 'none', 3000);
+        }
+
+        function loadProfile() {
+            const saved = localStorage.getItem('blockfit_profile');
+            if (saved) {
+                const profile = JSON.parse(saved);
+                document.getElementById('profileAge').value = profile.age || '';
+                document.getElementById('profileWeight').value = profile.weight || '';
+                document.getElementById('profileHeight').value = profile.height || '';
+                document.getElementById('profileGoal').value = profile.goal || 'ganar';
+            }
+        }
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('SW Registered', reg.scope))
+                .catch(err => console.log('SW Registration Failed', err));
+            });
+        }
+
+        // Call load profile on start
+        loadProfile();
 
         initApp();
     </script>
