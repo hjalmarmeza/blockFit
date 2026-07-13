@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlockFit Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/body-muscles/dist/umd/body-muscles.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f1115;
+            --text-primary: #ffffff;
+            --text-secondary: #9ca3af;
+            --accent-color: #ef4444; /* Rojo vibrante */
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --border-radius: 16px;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            background: radial-gradient(circle at top right, #2a0808 0%, #0f1115 40%),
+                        radial-gradient(circle at bottom left, #1a1c23 0%, #0f1115 40%);
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(15, 17, 21, 0.7);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; color: white; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px;}
+        .logo span { color: var(--accent-color); }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 0 0 1rem 0;
+            background: linear-gradient(to right, #fff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+        }
+
+        /* Search & Filters */
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: white;
+            font-size: 1.1rem;
+            outline: none;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .search-input:focus {
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+        }
+        
+        .quick-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+        .filter-chip {
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-chip:hover {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content Grid */
+        .main-container {
+            display: grid;
+            grid-template-columns: 300px 1fr 350px;
+            gap: 2rem;
+            padding: 0 5%;
+            max-width: 1400px;
+            margin: 0 auto 4rem;
+        }
+
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Left Panel - Fact of the Day */
+        .side-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            height: fit-content;
+            backdrop-filter: blur(10px);
+        }
+        .fact-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .fact-content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #d1d5db;
+        }
+
+        /* Center Map Area */
+        .map-section {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+        
+        .gender-toggle {
+            display: flex;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50px;
+            padding: 4px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--glass-border);
+        }
+        .gender-btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .gender-btn.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .chart-controls button {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .chart-controls button:hover, .chart-controls button.active {
+            background: var(--text-primary);
+            color: var(--bg-color);
+        }
+
+        #body-chart-container {
+            width: 100%;
+            max-width: 400px;
+            height: 500px;
+        }
+
+        /* Right Panel - Results */
+        .results-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            height: 700px;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+        .results-panel::-webkit-scrollbar { width: 6px; }
+        .results-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        .results-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 1.5rem 0;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .exercise-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .exercise-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-color);
+        }
+        .exercise-media img {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: #fff; /* Para resaltar los SVGs o GIFs si tienen fondo transparente */
+        }
+        .exercise-content {
+            padding: 1.2rem;
+        }
+        .exercise-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+        }
+        .exercise-badges {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-primary { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-secondary { background: rgba(255, 255, 255, 0.1); color: #d1d5db; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .exercise-instructions {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+
+        .loader {
+            display: none;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid var(--accent-color);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Splash Screen */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #1a1c23 0%, #0f1115 100%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .splash-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .splash-logo {
+            width: 180px;
+            height: 180px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(239, 68, 68, 0.3);
+            margin-bottom: 2rem;
+            object-fit: cover;
+        }
+        .splash-title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(to right, #fff, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -2px;
+        }
+        .splash-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            margin-top: 0.5rem;
+        }
+        .start-btn {
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            background: var(--accent-color);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+            transition: transform 0.3s, background 0.3s;
+        }
+        .start-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            background: #dc2626;
+        }
+
+    </style>
+</head>
+<body style="overflow: hidden;"> <!-- Evita scroll mientras el splash está activo -->
+
+    <!-- Splash Screen -->
+    <div class="splash-screen" id="splashScreen">
+        <img src="logo.jpg" alt="BlockFit Logo" class="splash-logo">
+        <h1 class="splash-title">BlockFit</h1>
+        <p class="splash-subtitle">Tu Arquitecto Corporal Personal</p>
+        <button class="start-btn" onclick="startApp()">Empezar</button>
+    </div>
+
+    <nav class="navbar">
+        <div class="logo">
+            <img src="logo.jpg" alt="BlockFit Logo" style="width: 32px; height: 32px; border-radius: 6px;">
+            Block<span>Fit</span>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>Forja tu físico ideal</h1>
+        <p>Selecciona un músculo en el mapa interactivo, o usa nuestro buscador universal para encontrar tu próximo entrenamiento.</p>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Buscar ejercicio, ej. 'Sentadilla' o 'Pecho'..." autocomplete="off">
+        </div>
+
+        <div class="quick-filters">
+            <div class="filter-chip" onclick="searchExercises('peso corporal')">🏠 Sin Equipo</div>
+            <div class="filter-chip" onclick="searchExercises('mancuerna')">🏋️ Mancuernas</div>
+            <div class="filter-chip" onclick="searchExercises('cardio')">🏃 Cardio</div>
+            <div class="filter-chip" onclick="searchExercises('estiramiento')">🧘 Estiramientos</div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Left Panel -->
+        <div class="side-panel">
+            <div class="fact-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                Tip Diario
+            </div>
+            <div class="fact-content" id="dailyFact">
+                El entrenamiento de fuerza no solo desarrolla masa muscular, también acelera tu metabolismo basal, ayudándote a quemar más calorías incluso en reposo.
+            </div>
+        </div>
+
+        <!-- Center Map -->
+        <div class="map-section">
+            <div class="gender-toggle">
+                <button class="gender-btn active" onclick="setGender('male')">Hombre</button>
+                <button class="gender-btn" onclick="setGender('female')">Mujer</button>
+            </div>
+            
+            <div class="chart-controls">
+                <button id="btn-front" class="active">Frente</button>
+                <button id="btn-back">Espalda</button>
+            </div>
+
+            <div id="body-chart-container"></div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="results-panel">
+            <h2 class="results-title" id="resultsTitle">Selecciona un músculo</h2>
+            <div id="loader" class="loader"></div>
+            <div id="exercises-list">
+                <p style="color: var(--text-secondary); text-align: center; margin-top: 2rem;">Los ejercicios aparecerán aquí.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DATASET_URL = 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/data/exercises.json';
+        let globalDataset = [];
+        let currentChart = null;
+        let currentGender = 'male';
+
+        // Traducciones avanzadas
+        const translationDict = {
+            'assisted': 'asistido', 'kneeling': 'de rodillas', 'grip': 'agarre', 'underhand': 'supino',
+            'overhand': 'prono', 'neutral': 'neutro', 'lying': 'tumbado', 'bent': 'inclinado',
+            'straight': 'recto', 'single': 'individual', 'one': 'a un', 'front': 'frontal',
+            'side': 'lateral', 'rear': 'posterior', 'lateral': 'lateral', 'push up': 'flexión',
+            'push-up': 'flexión', 'sit up': 'abdominal', 'sit-up': 'abdominal', 'crunch': 'encogimiento',
+            'squat': 'sentadilla', 'lunge': 'zancada', 'pull up': 'dominada', 'pull-up': 'dominada',
+            'chin up': 'dominada', 'pulldown': 'jalón al pecho', 'pull-down': 'jalón al pecho',
+            'pushdown': 'jalón de tríceps', 'push-down': 'jalón de tríceps', 'deadlift': 'peso muerto',
+            'bench press': 'press de banca', 'press': 'press', 'fly': 'apertura', 'flyes': 'aperturas',
+            'crossover': 'cruce', 'curl': 'curl', 'extension': 'extensión', 'raise': 'elevación',
+            'row': 'remo', 'dip': 'fondo', 'plank': 'plancha', 'twist': 'giro', 'step-up': 'subida a cajón',
+            'calf raise': 'elevación de gemelo', 'dumbbell': 'con mancuerna', 'barbell': 'con barra',
+            'cable': 'en polea', 'machine': 'en máquina', 'band': 'con banda elástica',
+            'kettlebell': 'con pesa rusa', 'smith': 'en máquina smith', 'lever': 'en máquina de palanca',
+            'sled': 'en trineo', 'suspension': 'en suspensión', 'bodyweight': 'con peso corporal',
+            'weighted': 'con peso', 'isometric': 'isométrico', 'seated': 'sentado', 'standing': 'de pie',
+            'incline': 'inclinado', 'decline': 'declinado', 'overhead': 'por encima de la cabeza',
+            'reverse': 'inverso', 'alternating': 'alterno', 'alternate': 'alterno', 'arm': 'brazo',
+            'leg': 'pierna', 'knee': 'rodilla', 'shoulder': 'hombro', 'chest': 'pecho', 'back': 'espalda',
+            'archer': 'arquero', 'wide': 'abierto', 'close': 'cerrado', 'with': 'con', 'on': 'en', 'and': 'y'
+        };
+
+        const muscleTranslationDict = {
+            "chest": "Pecho", "chest-left": "Pectoral Izquierdo", "chest-right": "Pectoral Derecho",
+            "abs": "Abdomen", "arms": "Brazos", "arms-left": "Brazo Izquierdo", "arms-right": "Brazo Derecho",
+            "back": "Espalda", "calves": "Gemelos", "legs": "Piernas", "shoulders": "Hombros",
+            "triceps": "Tríceps", "biceps": "Bíceps", "forearms": "Antebrazos", "glutes": "Glúteos",
+            "hamstrings": "Isquiotibiales", "quads": "Cuádriceps", "traps": "Trapecios"
+        };
+
+        const blocklist = ['assisted seated pectoralis major stretch with stability ball', 'inverse leg curl (bench support)'];
+        const facts = [
+            "El entrenamiento de fuerza acelera tu metabolismo basal.",
+            "El glúteo mayor es el músculo más fuerte del cuerpo humano.",
+            "Dormir 8 horas es crucial; los músculos crecen mientras descansas, no mientras entrenas.",
+            "La consistencia vence a la intensidad. Es mejor entrenar suavemente cada semana que muy duro una sola vez."
+        ];
+
+        document.getElementById('dailyFact').innerText = facts[Math.floor(Math.random() * facts.length)];
+
+        function translateTitle(name) {
+            let translated = name.toLowerCase();
+            const sortedKeys = Object.keys(translationDict).sort((a, b) => b.length - a.length);
+            for (let key of sortedKeys) {
+                const regex = new RegExp('\\b' + key + '\\b', 'g');
+                translated = translated.replace(regex, translationDict[key]);
+            }
+            return translated.charAt(0).toUpperCase() + translated.slice(1);
+        }
+
+        function translateName(name) {
+            for (const [key, val] of Object.entries(muscleTranslationDict)) {
+                if (name.toLowerCase().includes(key)) return val;
+            }
+            return name.replace(/-/g, ' ').toUpperCase();
+        }
+
+        async function initApp() {
+            try {
+                const response = await fetch(DATASET_URL);
+                if(response.ok) {
+                    globalDataset = await response.json();
+                }
+            } catch (e) {
+                console.error("Error al cargar dataset", e);
+            }
+            renderChart(currentGender, "FRONT");
+        }
+
+        function renderChart(gender, side) {
+            const container = document.getElementById('body-chart-container');
+            container.innerHTML = ''; // Limpiar el anterior
+            
+            currentChart = new BodyMuscles.BodyChart(container, {
+                view: side,
+                colors: {
+                    base: '#374151',
+                    hover: '#ef4444',
+                    selected: '#ef4444'
+                },
+                onMuscleClick: (muscle) => {
+                    const id = typeof muscle === 'object' ? muscle.id : muscle;
+                    if(currentChart) {
+                        currentChart.update({
+                            bodyState: {
+                                [id]: { intensity: 8, selected: true }
+                            }
+                        });
+                    }
+                    openExercisesByTarget(id);
+                }
+            });
+        }
+
+        function setGender(gender) {
+            currentGender = gender;
+            document.querySelectorAll('.gender-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            const isFront = document.getElementById('btn-front').classList.contains('active');
+            renderChart(gender, isFront ? "FRONT" : "BACK");
+        }
+
+        document.getElementById('btn-front').addEventListener('click', (e) => {
+            e.target.classList.add('active');
+            document.getElementById('btn-back').classList.remove('active');
+            renderChart(currentGender, "FRONT");
+        });
+
+        document.getElementById('btn-back').addEventListener('click', (e) => {
+            e.target.classList.add('active');
+            document.getElementById('btn-front').classList.remove('active');
+            renderChart(currentGender, "BACK");
+        });
+
+        function renderResults(filtered, title) {
+            const exercisesList = document.getElementById('exercises-list');
+            const resultsTitle = document.getElementById('resultsTitle');
+            const loader = document.getElementById('loader');
+
+            loader.style.display = 'block';
+            exercisesList.innerHTML = '';
+            resultsTitle.innerText = title;
+
+            setTimeout(() => {
+                loader.style.display = 'none';
+                
+                if (filtered.length === 0) {
+                    exercisesList.innerHTML = '<p>No se encontraron ejercicios con este criterio.</p>';
+                    return;
+                }
+
+                for (let ex of filtered) {
+                    const card = document.createElement('div');
+                    card.className = 'exercise-card';
+                    const imgUrl = ex.gif_url ? ('https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/' + ex.gif_url) : 'https://via.placeholder.com/300x300?text=Sin+Imagen';
+                    const exerciseText = (ex.instructions && typeof ex.instructions === 'object') ? (ex.instructions.es || ex.instructions.en || 'Sin descripción detallada.') : (ex.instructions || 'Sin descripción detallada.');
+                    const translatedTitle = translateTitle(ex.name);
+
+                    card.innerHTML = `
+                        <div class="exercise-media">
+                            <img src="${imgUrl}" alt="${translatedTitle}" onerror="this.src='https://via.placeholder.com/300x300?text=Sin+Imagen'">
+                        </div>
+                        <div class="exercise-content">
+                            <h3 class="exercise-name" style="text-transform: capitalize;">${translatedTitle}</h3>
+                            <div class="exercise-badges">
+                                <span class="badge badge-primary">${ex.body_part || 'Varios'}</span>
+                                <span class="badge badge-secondary">${ex.equipment || 'peso corporal'}</span>
+                            </div>
+                            <div class="exercise-instructions">
+                                ${exerciseText}
+                            </div>
+                        </div>
+                    `;
+                    exercisesList.appendChild(card);
+                }
+            }, 300); // Simulamos carga para el UI
+        }
+
+        function openExercisesByTarget(muscleId) {
+            let targetName = muscleId.replace('-left', '').replace('-right', '');
+            
+            // Mapeo robusto desde los IDs de los SVG hacia los nombres de la base de datos
+            if(targetName.includes('abs') || targetName.includes('abdominals') || targetName.includes('obliques')) targetName = 'abs';
+            if(targetName.includes('chest') || targetName.includes('pectoral')) targetName = 'pectorals';
+            if(targetName.includes('shoulder') || targetName.includes('deltoid')) targetName = 'delts';
+            if(targetName.includes('lats')) targetName = 'lats';
+            if(targetName.includes('traps') || targetName.includes('neck')) targetName = 'traps';
+            if(targetName.includes('lower-back') || targetName.includes('spine')) targetName = 'spine';
+            if(targetName.includes('gluteus') || targetName.includes('glute')) targetName = 'glutes';
+            if(targetName.includes('quads')) targetName = 'quads';
+            if(targetName.includes('hamstring')) targetName = 'hamstrings';
+            if(targetName.includes('calv') || targetName.includes('gastroc') || targetName.includes('soleus')) targetName = 'calves';
+            if(targetName.includes('biceps')) targetName = 'biceps';
+            if(targetName.includes('triceps')) targetName = 'triceps';
+            if(targetName.includes('forearm')) targetName = 'forearms';
+            if(targetName.includes('serratus')) targetName = 'serratus anterior';
+
+            const filtered = globalDataset.filter(ex => {
+                const isTarget = ex.target === targetName || ex.bodyPart === targetName || ex.body_part === targetName || (ex.target && ex.target.includes(targetName));
+                const isNotBlocked = !blocklist.includes(ex.name.toLowerCase());
+                return isTarget && isNotBlocked;
+            }).slice(0, 20);
+
+            renderResults(filtered, translateName(muscleId));
+            
+            // Scroll en móviles
+            if(window.innerWidth < 1024) {
+                document.querySelector('.results-panel').scrollIntoView({behavior: 'smooth'});
+            }
+        }
+
+        // Búsqueda Universal
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            if(query.length < 3) return; // Esperar 3 caracteres
+            searchExercises(query);
+        });
+
+        function searchExercises(query) {
+            query = query.toLowerCase();
+            const queryInEnglish = Object.keys(translationDict).find(k => translationDict[k] === query) || query;
+
+            const filtered = globalDataset.filter(ex => {
+                const translated = translateTitle(ex.name).toLowerCase();
+                const isMatch = translated.includes(query) || ex.name.toLowerCase().includes(query) || ex.name.toLowerCase().includes(queryInEnglish) || (ex.body_part && ex.body_part.toLowerCase().includes(queryInEnglish));
+                const isNotBlocked = !blocklist.includes(ex.name.toLowerCase());
+                return isMatch && isNotBlocked;
+            }).slice(0, 20);
+
+            renderResults(filtered, `Resultados para "${query}"`);
+            if(window.innerWidth < 1024) {
+                document.querySelector('.results-panel').scrollIntoView({behavior: 'smooth'});
+            }
+        }
+
+        function startApp() {
+            window.scrollTo(0, 0);
+            document.getElementById('splashScreen').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
