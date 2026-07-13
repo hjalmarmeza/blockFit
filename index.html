@@ -129,8 +129,9 @@
             right: 15px;
         }
         .quick-filters-wrapper::before {
-            content: '⬅';
+            content: '➔';
             left: 15px;
+            transform: translateY(-50%) rotate(180deg);
         }
         .quick-filters {
             display: flex;
@@ -411,7 +412,7 @@
                 animation: pulse-arrow-left 2s infinite;
             }
             @keyframes pulse-arrow-right { 0% { opacity: 0.3; transform: translate(0, -50%); } 50% { opacity: 1; transform: translate(5px, -50%); } 100% { opacity: 0.3; transform: translate(0, -50%); } }
-            @keyframes pulse-arrow-left { 0% { opacity: 0.3; transform: translate(0, -50%); } 50% { opacity: 1; transform: translate(-5px, -50%); } 100% { opacity: 0.3; transform: translate(0, -50%); } }
+            @keyframes pulse-arrow-left { 0% { opacity: 0.3; transform: translate(0, -50%) rotate(180deg); } 50% { opacity: 1; transform: translate(-5px, -50%) rotate(180deg); } 100% { opacity: 0.3; transform: translate(0, -50%) rotate(180deg); } }
             
             .quick-filters {
                 justify-content: flex-start;
