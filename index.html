@@ -79,13 +79,17 @@
 
         /* Search & Filters */
         .search-container {
+            width: 100%;
             max-width: 600px;
-            margin: 0 auto 2rem;
+            margin: 0 auto 2rem auto;
             position: relative;
+            box-sizing: border-box;
+            padding: 0 1rem;
         }
         .search-input {
             width: 100%;
-            padding: 1.2rem 1.5rem;
+            box-sizing: border-box;
+            padding: 1.2rem 1.5rem 1.2rem 1.5rem;
             border-radius: 50px;
             border: 1px solid var(--glass-border);
             background: var(--glass-bg);
@@ -102,12 +106,30 @@
             box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
         }
         
+        .quick-filters-wrapper {
+            position: relative;
+            max-width: 100vw;
+            overflow: hidden;
+            margin-bottom: 3rem;
+            padding: 0 1rem;
+        }
+        .quick-filters-wrapper::after {
+            content: '➔';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            opacity: 0.7;
+            pointer-events: none;
+            font-size: 1.2rem;
+            display: none;
+        }
         .quick-filters {
             display: flex;
             justify-content: center;
             gap: 1rem;
             flex-wrap: wrap;
-            margin-bottom: 3rem;
         }
         .filter-chip {
             white-space: nowrap;
@@ -373,11 +395,18 @@
         }
 
         @media (max-width: 768px) {
+            .quick-filters-wrapper::after {
+                display: block;
+                animation: pulse-arrow 2s infinite;
+            }
+            @keyframes pulse-arrow { 0% { opacity: 0.3; transform: translate(0, -50%); } 50% { opacity: 1; transform: translate(5px, -50%); } 100% { opacity: 0.3; transform: translate(0, -50%); } }
+            
             .quick-filters {
                 justify-content: flex-start;
                 flex-wrap: nowrap;
                 overflow-x: auto;
                 padding-bottom: 10px;
+                padding-right: 40px; /* Space for arrow */
                 -webkit-overflow-scrolling: touch;
             }
             /* Ocultar barra de scroll en filtros */
@@ -449,11 +478,13 @@
             <input type="text" id="searchInput" class="search-input" placeholder="Buscar ejercicio, ej. 'Sentadilla' o 'Pecho'..." autocomplete="off">
         </div>
 
-        <div class="quick-filters">
-            <div class="filter-chip" onclick="searchExercises('peso corporal')">🏠 Sin Equipo</div>
-            <div class="filter-chip" onclick="searchExercises('mancuerna')">🏋️ Mancuernas</div>
-            <div class="filter-chip" onclick="searchExercises('cardio')">🏃 Cardio</div>
-            <div class="filter-chip" onclick="searchExercises('estiramiento')">🧘 Estiramientos</div>
+        <div class="quick-filters-wrapper">
+            <div class="quick-filters">
+                <div class="filter-chip" onclick="searchExercises('peso corporal')">🏠 Sin Equipo</div>
+                <div class="filter-chip" onclick="searchExercises('mancuerna')">🏋️ Mancuernas</div>
+                <div class="filter-chip" onclick="searchExercises('cardio')">🏃 Cardio</div>
+                <div class="filter-chip" onclick="searchExercises('estiramiento')">🧘 Estiramientos</div>
+            </div>
         </div>
     </div>
 
@@ -503,6 +534,19 @@
         // Traducciones avanzadas
         const translationDict = {
             'assisted': 'asistido', 'kneeling': 'de rodillas', 'grip': 'agarre', 'underhand': 'supino',
+            'calf': 'gemelo', 'calves': 'gemelos', 'glute': 'glúteo', 'glutes': 'glúteos',
+            'wrist': 'muñeca', 'neck': 'cuello', 'core': 'abdomen', 'abs': 'abdominales',
+            'back': 'espalda', 'chest': 'pecho', 'shoulder': 'hombro', 'shoulders': 'hombros',
+            'leg': 'pierna', 'legs': 'piernas', 'arm': 'brazo', 'arms': 'brazos',
+            'barbell': 'barra', 'dumbbell': 'mancuerna', 'cable': 'polea', 'machine': 'máquina',
+            'band': 'banda', 'kettlebell': 'pesa rusa', 'weighted': 'con peso',
+            'bodyweight': 'peso corporal', 'smith': 'smith', 'lever': 'palanca',
+            'alternate': 'alterno', 'alternating': 'alternando', 'seated': 'sentado',
+            'standing': 'de pie', 'incline': 'inclinado', 'decline': 'declinado',
+            'close': 'cerrado', 'wide': 'abierto', 'reverse': 'inverso', 'inverse': 'inverso',
+            'jump': 'salto', 'jumping': 'saltando', 'step': 'paso', 'walk': 'caminata',
+            'walking': 'caminando', 'row': 'remo', 'shrug': 'encogimiento de hombros',
+            'kickback': 'patada de tríceps', 'press': 'press', 'dip': 'fondo', 'dips': 'fondos',
             'overhand': 'prono', 'neutral': 'neutro', 'lying': 'tumbado', 'bent': 'inclinado',
             'straight': 'recto', 'single': 'individual', 'one': 'a un', 'front': 'frontal',
             'side': 'lateral', 'rear': 'posterior', 'lateral': 'lateral', 'push up': 'flexión',
@@ -510,7 +554,7 @@
             'squat': 'sentadilla', 'lunge': 'zancada', 'pull up': 'dominada', 'pull-up': 'dominada',
             'chin up': 'dominada', 'pulldown': 'jalón al pecho', 'pull-down': 'jalón al pecho',
             'pushdown': 'jalón de tríceps', 'push-down': 'jalón de tríceps', 'deadlift': 'peso muerto',
-            'bench press': 'press de banca', 'press': 'press', 'fly': 'apertura', 'flyes': 'aperturas',
+            'bench press': 'press de banca', 'fly': 'apertura', 'flyes': 'aperturas',
             'crossover': 'cruce', 'curl': 'curl', 'extension': 'extensión', 'raise': 'elevación',
             'row': 'remo', 'dip': 'fondo', 'plank': 'plancha', 'twist': 'giro', 'step-up': 'subida a cajón',
             'calf raise': 'elevación de gemelo', 'dumbbell': 'con mancuerna', 'barbell': 'con barra',
