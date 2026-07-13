@@ -110,6 +110,7 @@
             margin-bottom: 3rem;
         }
         .filter-chip {
+            white-space: nowrap;
             padding: 0.6rem 1.2rem;
             border-radius: 50px;
             background: var(--glass-bg);
@@ -371,9 +372,59 @@
             background: #dc2626;
         }
 
+        @media (max-width: 768px) {
+            .quick-filters {
+                justify-content: flex-start;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 10px;
+                -webkit-overflow-scrolling: touch;
+            }
+            /* Ocultar barra de scroll en filtros */
+            .quick-filters::-webkit-scrollbar {
+                display: none;
+            }
+            .hero-title {
+                font-size: 2.5rem;
+            }
+        }
+        
+        /* Floating Back To Top Button */
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5);
+            cursor: pointer;
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+        }
+        .fab.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .fab:active {
+            transform: scale(0.9);
+        }
+
     </style>
 </head>
 <body style="overflow: hidden;"> <!-- Evita scroll mientras el splash está activo -->
+
+    <!-- Back to top button -->
+    <div class="fab" id="fab" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+    </div>
 
     <!-- Splash Screen -->
     <div class="splash-screen" id="splashScreen">
@@ -671,6 +722,16 @@
             document.getElementById('splashScreen').classList.add('hidden');
             document.body.style.overflow = 'auto';
         }
+
+        // Show/hide floating button on scroll
+        window.addEventListener('scroll', () => {
+            const fab = document.getElementById('fab');
+            if (window.scrollY > 300) {
+                fab.classList.add('visible');
+            } else {
+                fab.classList.remove('visible');
+            }
+        });
 
         initApp();
     </script>
