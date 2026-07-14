@@ -987,13 +987,15 @@
             } else {
                 favorites.push(name);
                 btn.classList.add('active');
-                // Hide the card instantly if we are favoriting from the home view
+                // Hide the card after a short delay so the user sees the red heart
                 if (document.getElementById('view-home').classList.contains('active')) {
                     const card = btn.closest('.exercise-card');
                     if (card) {
-                        card.style.transform = 'scale(0.8)';
-                        card.style.opacity = '0';
-                        setTimeout(() => card.style.display = 'none', 300);
+                        setTimeout(() => {
+                            card.style.transform = 'scale(0.8)';
+                            card.style.opacity = '0';
+                            setTimeout(() => card.style.display = 'none', 300);
+                        }, 400); // 400ms delay
                     }
                 }
             }
