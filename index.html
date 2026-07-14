@@ -268,7 +268,7 @@
             border-radius: 12px;
             overflow: hidden;
             margin-bottom: 1.5rem;
-            transition: transform 0.3s, border-color 0.3s;
+            transition: transform 0.3s, border-color 0.3s, opacity 0.3s;
         }
         .exercise-card:hover {
             transform: translateY(-4px);
@@ -846,6 +846,8 @@
                 }
 
                 for (let ex of filtered) {
+                    if (favorites.includes(ex.name)) continue;
+
                     const card = document.createElement('div');
                     card.className = 'exercise-card';
                     const imgUrl = ex.gif_url ? ('https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/' + ex.gif_url) : 'https://via.placeholder.com/300x300?text=Sin+Imagen';
@@ -977,12 +979,32 @@
             if (index > -1) {
                 favorites.splice(index, 1);
                 btn.classList.remove('active');
+                // Remove the card if we are unfavoriting from the routine view
+                if (document.getElementById('view-routine').classList.contains('active')) {
+                    const card = btn.closest('.exercise-card');
+                    if (card) card.style.display = 'none';
+                }
             } else {
                 favorites.push(name);
                 btn.classList.add('active');
+                // Hide the card instantly if we are favoriting from the home view
+                if (document.getElementById('view-home').classList.contains('active')) {
+                    const card = btn.closest('.exercise-card');
+                    if (card) {
+                        card.style.transform = 'scale(0.8)';
+                        card.style.opacity = '0';
+                        setTimeout(() => card.style.display = 'none', 300);
+                    }
+                }
             }
             localStorage.setItem('blockfit_favs', JSON.stringify(favorites));
-            renderRoutine();
+            
+            // Re-render routine silently so it's ready when switching views
+            // We don't want it to completely wipe DOM instantly if user is in Routine view
+            // since we just animated it away. But for safety, we'll let it happen.
+            if (!document.getElementById('view-routine').classList.contains('active')) {
+                renderRoutine();
+            }
         }
 
         function switchView(viewId, navElement) {
