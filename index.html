@@ -539,10 +539,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: color 0.3s;
+            backdrop-filter: blur(5px);
+            filter: grayscale(100%);
+            transition: transform 0.2s ease, filter 0.2s ease;
         }
         .btn-fav.active {
-            color: var(--accent-color);
+            filter: grayscale(0%);
+            transform: scale(1.1);
         }
         .muscle-group-title {
             margin: 2rem 0 1rem;
@@ -841,7 +844,7 @@
 
                     const isFav = favorites.includes(ex.name);
                     card.innerHTML = `
-                        <button class="btn-fav ${isFav ? 'active' : ''}" onclick="toggleFavorite(this, '${encodeURIComponent(ex.name)}')">${isFav ? '❤️' : '🤍'}</button>
+                        <button class="btn-fav ${isFav ? 'active' : ''}" onclick="toggleFavorite(this, '${encodeURIComponent(ex.name)}')">❤️</button>
                         <div class="exercise-media">
                             <img src="${imgUrl}" alt="${translatedTitle}" onerror="this.src='https://via.placeholder.com/300x300?text=Sin+Imagen'">
                         </div>
@@ -964,11 +967,9 @@
             if (index > -1) {
                 favorites.splice(index, 1);
                 btn.classList.remove('active');
-                btn.innerText = '🤍';
             } else {
                 favorites.push(name);
                 btn.classList.add('active');
-                btn.innerText = '❤️';
             }
             localStorage.setItem('blockfit_favs', JSON.stringify(favorites));
             renderRoutine();
